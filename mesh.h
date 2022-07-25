@@ -14,5 +14,5 @@ struct vertex
 
 struct mesh
 {
-    vector<vertex> vertexs; 
+    vector<vertex> vertexs;
 };
