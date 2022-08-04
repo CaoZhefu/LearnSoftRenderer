@@ -1,6 +1,6 @@
 #pragma once
 
-#include "myMath.h"
+#include "MathUtils.h"
 
 #ifndef STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -73,9 +73,9 @@ public:
     void saveToBmp(const std::string& path){
         unsigned char* data = new unsigned char[width * height * 3];
         for(int i = 0; i < width * height; ++i){
-            data[i * 3 + 0] = frameBuffer[i].x;
-            data[i * 3 + 1] = frameBuffer[i].y;
-            data[i * 3 + 2] = frameBuffer[i].z;
+            data[i * 3 + 0] = (unsigned char)frameBuffer[i][0];
+            data[i * 3 + 1] = (unsigned char)frameBuffer[i][1];
+            data[i * 3 + 2] = (unsigned char)frameBuffer[i][2];
         }
 
         stbi_write_bmp(path.c_str(), width, height, 3, data);

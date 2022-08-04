@@ -1,6 +1,6 @@
 #pragma once
 
-#include "myMath.h"
+#include "MathUtils.h"
 #include <vector>
 
 using std::vector;
