@@ -15,7 +15,7 @@ int main()
     m[1][3] = 3.f;
     m[2][3] = 1.f;
 
-    std::cout << v * m << std::endl;
+    std::cout << m * v << std::endl;
 
 //     renderer render(300, 200);
 
