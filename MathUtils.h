@@ -88,7 +88,10 @@ typedef vec<2> vec2;
 typedef vec<3> vec3;
 typedef vec<4> vec4;
 
-vec3 cross(const vec3& v1, const vec3& v2);
+vec3 cross(const vec3& v1, const vec3& v2)
+{
+    return vec3{ v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
+}
 
 template<int nRow, int nCol>
 class mat
@@ -97,6 +100,15 @@ public:
     vec<nCol> rows[nRow] = {{}};
     vec<nCol>& operator[](const int i) { assert(i >= 0 && i < nRow); return rows[i]; }
     const vec<nCol>& operator[](const int i) const { assert(i >= 0 && i < nRow); return rows[i]; }
+
+    vec<nRow> col(int col_idx) const
+    {
+        vec<nRow> ret;
+        for(int i = 0; i < nRow; ++i){
+            ret[i] = rows[i][col_idx];
+        }
+        return ret;
+    }
 
     static mat<nRow, nCol> get_identity()
     {
@@ -121,7 +133,13 @@ template<int nRow, int nCol> vec<nRow> operator*(const mat<nRow, nCol>& lhs, con
 
 template<int R1, int C1, int C2> mat<R1, C2> operator*(const mat<R1, C1>& lhs, const mat<C1, C2>& rhs)
 {
-    
+    mat<R1, C2> ret;
+    for(int i = 0; i < R1; ++i){
+        for(int j = 0; j < C2; ++j){
+            ret[i][j] = lhs[i] * rhs.col(j);
+        }
+    }
+    return ret;
 }
 
 template<int nRow, int nCol> mat<nRow, nCol> operator+(const mat<nRow, nCol>& lhs, const mat<nRow, nCol>& rhs)
@@ -143,3 +161,14 @@ template<int nRow, int nCol> mat<nRow, nCol> operator-(const mat<nRow, nCol>& lh
 }
 
 typedef mat<4, 4> mat4;
+
+template<int nRow, int nCol> std::ostream& operator<<(std::ostream& out, const mat<nRow, nCol>& m)
+{
+    for(int i = 0; i < nRow; ++i){
+        for(int j = 0; j < nCol; ++j){
+            out << m[i][j] << " ";
+        }
+        out << std::endl;
+    }
+    return out;
+}

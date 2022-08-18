@@ -32,6 +32,11 @@ public:
             frameBuffer[width * y + x] = color;
     }
 
+    vec3& getPixel(int x, int y){
+        if(x >= 0 && x < width && y >= 0 && y < height)
+            return frameBuffer[width * y + x]; 
+    }
+
     void drawLine(int x1, int y1, int x2, int y2, const vec3& color){
         bool steep = false;
         // traverse by X or Y
@@ -69,8 +74,50 @@ public:
         }
     }
 
-    void drawTriangle(){
+    void drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color){
+        // sort vertex by Y
+        if(v1.y > v2.y) std::swap(v1, v2);
+        if(v1.y > v3.y) std::swap(v1, v3);
+        if(v2.y > v3.y) std::swap(v2, v3);
+        int total_height = v3.y - v1.y;
 
+        // draw bottom part
+        int bottom_height = v2.y - v1.y + 1;
+        for(int y = v1.y; y <= v2.y; ++y){
+            float a1 = (float)(y - v1.y) / total_height;
+            float a2 = (float)(y - v1.y) / bottom_height;
+            vec2 A = v1 + (v3 - v1) * a1;
+            vec2 B = v1 + (v2 - v1) * a2;
+            if(A.x > B.x) std::swap(A, B);
+            for(int i = A.x; i <= B.x; ++i)
+                drawPixel(i, y, color);
+        }
+
+        // draw upper part
+        int upper_height = v3.y - v2.y + 1;
+        for(int y = v2.y; y <= v3.y; ++y){
+            float a1 = (float)(y - v1.y) / total_height;
+            float a2 = (float)(y - v2.y) / upper_height;
+            vec2 A = v1 + (v3 - v1) * a1;
+            vec2 B = v2 + (v3 - v2) * a2;
+            if(A.x > B.x) std::swap(A, B);
+            for(int i = A.x; i <= B.x; ++i)
+                drawPixel(i, y, color);
+        }
+    }
+
+    void filpFrameBuffer()
+    {
+        int i = 0;
+        int j = height - 1;
+        while(j > i){
+            for(int x = 0; x < width; ++x){
+                vec3& p1 = getPixel(x, i);
+                vec3& p2 = getPixel(x, j);
+                std::swap(p1, p2);
+            }
+            ++i; --j;
+        }
     }
 
     // 保存为文件
