@@ -74,7 +74,7 @@ public:
         }
     }
 
-    void drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color){
+    void drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const vec3& color){
         // sort vertex by Y
         if(v1.y > v2.y) std::swap(v1, v2);
         if(v1.y > v3.y) std::swap(v1, v3);
@@ -106,6 +106,24 @@ public:
         }
     }
 
+    void drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color){
+        vec2 bboxmin(width - 1, height - 1);
+        vec2 bboxmax(0, 0);
+        bboxmin.x = std::max(0.f, std::min(v1.x, std::min(v2.x, v3.x)));
+        bboxmin.y = std::max(0.f, std::min(v1.y, std::min(v2.y, v3.y)));
+        bboxmax.x = std::min((float)(width - 1), std::max(v1.x, std::max(v2.x, v3.x)));
+        bboxmax.y = std::min((float)(height - 1), std::max(v1.y, std::max(v2.y, v3.y)));
+
+        vec2 p;
+        for(p.x = bboxmin.x; p.x <= bboxmax.x; p.x++){
+            for(p.y = bboxmin.y; p.y <= bboxmax.y; p.y++){
+                vec3 bc = barycentric(v1, v2, v3, p);
+                if(bc.x < 0 || bc.y < 0 || bc.z < 0) continue;
+                drawPixel(p.x, p.y, color);
+            }
+        }
+    }
+
     void filpFrameBuffer()
     {
         int i = 0;
@@ -120,7 +138,7 @@ public:
         }
     }
 
-    // 保存为文件
+    // 保存为图片
     void saveToBmp(const std::string& path){
         unsigned char* data = new unsigned char[width * height * 3];
         for(int i = 0; i < width * height; ++i){
