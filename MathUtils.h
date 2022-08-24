@@ -11,6 +11,14 @@ public:
     float operator[](const int i) const { assert(i >= 0 && i < n); return data[i]; }
     float& operator[](const int i) { assert(i >= 0 && i < n); return data[i]; }
     float length() { std::sqrt(*this * *this); }
+    void normalize() { 
+        float len = length();
+        if(len > 0.f){
+            for(int i = 0; i < n; ++i)
+                data[i] /= len;
+        }
+    }
+
     float data[n] = {0};
 };
 
@@ -70,6 +78,14 @@ public:
     float operator[](const int i) const { assert(i >= 0 && i < 2); return i == 0 ? x : y; }
     float& operator[](const int i) { assert(i >= 0 && i < 2); return i == 0 ? x : y; }
     float length() { return std::sqrt(*this * *this); }
+    void normalize() { 
+        float len = length();
+        if(len > 0.f){
+            x /= len;
+            y /= len;
+        }
+    }
+
     float x, y;
 };
 
@@ -81,6 +97,15 @@ public:
     float operator[](const int i) const { assert(i >= 0 && i < 3); return i == 0 ? x : (i == 1 ? y : z); }
     float& operator[](const int i) { assert(i >= 0 && i < 3); return i == 0 ? x : (i == 1 ? y : z); }
     float length() { return std::sqrt(*this * *this); }
+        void normalize() { 
+        float len = length();
+        if(len > 0.f){
+            x /= len;
+            y /= len;
+            z /= len;
+        }
+    }
+
     float x, y, z;
 };
 

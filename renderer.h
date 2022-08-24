@@ -6,7 +6,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #endif
 
-#include "stb_image_write.h"
+#include "ThirdParty/stb_image_write.h"
 #include <string>
 #include <fstream>
 
@@ -30,11 +30,6 @@ public:
     void drawPixel(int x, int y, const vec3& color){
         if(x >= 0 && x < width && y >= 0 && y < height)
             frameBuffer[width * y + x] = color;
-    }
-
-    vec3& getPixel(int x, int y){
-        if(x >= 0 && x < width && y >= 0 && y < height)
-            return frameBuffer[width * y + x]; 
     }
 
     void drawLine(int x1, int y1, int x2, int y2, const vec3& color){
@@ -130,9 +125,7 @@ public:
         int j = height - 1;
         while(j > i){
             for(int x = 0; x < width; ++x){
-                vec3& p1 = getPixel(x, i);
-                vec3& p2 = getPixel(x, j);
-                std::swap(p1, p2);
+                std::swap(frameBuffer[x + width * i], frameBuffer[x + width * j]);
             }
             ++i; --j;
         }
