@@ -1,6 +1,15 @@
 #include <iostream>
+
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
+
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+
 #include "renderer.h"
-#include "MathUtils.h"
+#include "mesh.h"
 
 int main()
 {

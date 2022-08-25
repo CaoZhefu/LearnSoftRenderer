@@ -113,10 +113,7 @@ typedef vec<2> vec2;
 typedef vec<3> vec3;
 typedef vec<4> vec4;
 
-vec3 cross(const vec3& v1, const vec3& v2)
-{
-    return vec3{ v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
-}
+vec3 cross(const vec3& v1, const vec3& v2);
 
 template<int nRow, int nCol>
 class mat
@@ -199,13 +196,4 @@ template<int nRow, int nCol> std::ostream& operator<<(std::ostream& out, const m
 }
 
 // 求三角形ABC中p点重心坐标
-vec3 barycentric(vec2& A, vec2& B, vec2& C, vec2& p)
-{
-    vec3 xvec(C.x - A.x, B.x - A.x, A.x - p.x);
-    vec3 yvec(C.y - A.y, B.y - A.y, A.y - p.y);
-    vec3 u = cross(xvec, yvec);
-    if(std::abs(u.z) < 0.999f)
-        return vec3(-1, 1, 1); // will thrown away by rasterizator
-
-    return vec3(1.f - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
-}
+vec3 barycentric(vec2& A, vec2& B, vec2& C, vec2& p);

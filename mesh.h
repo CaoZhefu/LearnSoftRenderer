@@ -2,6 +2,7 @@
 
 #include "MathUtils.h"
 #include <vector>
+#include "ThirdParty/stb_image.h"
 
 using std::vector;
 using std::string;
@@ -10,15 +11,25 @@ class texture
 {
 public:
     unsigned char* data;
+    int width, height, channelCnt;
 
-    texture(const string& path)
-    {
+    texture() {}
 
+    texture(const string& path) {
+        loadFile(path);
     }
 
-    ~texture()
-    {
+    void loadFile(const string& path) {
+        data = stbi_load(path.c_str(), &width, &height, &channelCnt, 0);
 
+        if(!data)
+        {
+            std::cerr << "Texture load failed at path: " << path << std::endl;
+        }
+    }
+
+    ~texture() {
+        delete data;
     }
 };
 
