@@ -3,6 +3,8 @@
 #include<cassert>
 #include<iostream>
 
+float frac(float t);
+
 template<int n>
 class vec
 {
@@ -156,11 +158,9 @@ template<int nRow, int nCol> vec<nRow> operator*(const mat<nRow, nCol>& lhs, con
 template<int R1, int C1, int C2> mat<R1, C2> operator*(const mat<R1, C1>& lhs, const mat<C1, C2>& rhs)
 {
     mat<R1, C2> ret;
-    for(int i = 0; i < R1; ++i){
-        for(int j = 0; j < C2; ++j){
+    for(int i = 0; i < R1; ++i)
+        for(int j = 0; j < C2; ++j)
             ret[i][j] = lhs[i] * rhs.col(j);
-        }
-    }
     return ret;
 }
 
