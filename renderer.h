@@ -38,7 +38,7 @@ public:
     void drawLine(int x1, int y1, int x2, int y2, const vec3& color);
     void drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const vec3& color);
     void drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color);
-    void drawMesh(const mesh& m, const IShader& shader);
+    void drawMesh(const mesh& model, IShader& shader);
     void filpFrameBuffer();
     void saveToBmp(const std::string& path);
 

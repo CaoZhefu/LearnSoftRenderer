@@ -97,8 +97,23 @@ void renderer::drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color) {
     }
 }
 
-void renderer::drawMesh(const mesh& m, const IShader& shader) {
+void renderer::drawMesh(const mesh& model, IShader& shader) {
+    // render per face
+    for(int i = 0; i < model.faceNum(); ++i) {
+        // 1. get face vertexs 
+        vec3 originVerts[3];
+        for(int j = 0; j < 3; ++j)
+            originVerts[j] = model.getVertex(i, j);
 
+        // 2. transform to clip coordinates
+        vec4 clipPos[3];
+        for(int j = 0; j < 3; ++j)
+            shader.vert(originVerts[j], clipPos[j]);
+
+        // 3. rasterize to screen, check zbuffer
+
+        // 4. shading by frag shader
+    }
 }
 
 void renderer::filpFrameBuffer() {
