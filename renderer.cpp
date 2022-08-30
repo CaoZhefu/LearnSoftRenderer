@@ -97,6 +97,10 @@ void renderer::drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color) {
     }
 }
 
+void renderer::drawMesh(const mesh& m, const IShader& shader) {
+
+}
+
 void renderer::filpFrameBuffer() {
     int i = 0;
     int j = height - 1;

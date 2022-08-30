@@ -13,9 +13,12 @@
 
 int main()
 {
-    renderer render(300, 200);
+    renderer render(500, 500);
+    mesh floorMesh("../../obj/floor.obj");
 
-    render.drawTriangle(vec2(180, 50), vec2(150, 1), vec2(70, 180), vec3(255, 255, 0));
+    //render.drawMesh(floorMesh);
+
+    //render.drawTriangle(vec2(180, 50), vec2(150, 1), vec2(70, 180), vec3(255, 255, 0));
     render.filpFrameBuffer();
     render.saveToBmp("out.bmp");
 

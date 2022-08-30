@@ -5,6 +5,11 @@
 
 float frac(float t);
 
+template<typename T>
+T clamp(T x, T min, T max) {
+    return x < min ? min : (x > max ? max : x);
+}
+
 template<int n>
 class vec
 {
@@ -109,6 +114,44 @@ public:
     }
 
     float x, y, z;
+};
+
+template<> class vec<4>
+{
+public:
+    vec() = default;
+    vec(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+    float operator[](const int i) const { 
+        assert(i >= 0 && i < 4);
+        switch(i) {
+            case 0 : return x;
+            case 1 : return y;
+            case 2 : return z;
+            case 3 : return w;
+        }
+        return 0.f;
+    }
+    float& operator[](const int i) { 
+        assert(i >= 0 && i < 4);
+        switch(i) {
+            case 0 : return x;
+            case 1 : return y;
+            case 2 : return z;
+            case 3 : return w;
+        }
+        return x;
+    }
+    float length() { return std::sqrt(*this * *this); }
+    void normalize() { 
+        float len = length();
+        if(len > 0.f){
+            x /= len;
+            y /= len;
+            z /= len;
+        }
+    }
+
+    float x, y, z, w;
 };
 
 typedef vec<2> vec2;
