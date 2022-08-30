@@ -12,6 +12,10 @@ public:
 
 class Shader_Phong : public IShader
 {
+public:
+    mat4 model;
+    mat4 view;
+    mat4 persp;
     texture* diffuseTex;
     texture* normalTex;
     vec3 lightPos;

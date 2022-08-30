@@ -10,15 +10,18 @@
 
 #include "renderer.h"
 #include "mesh.h"
+#include "shader.h"
 
 int main()
 {
     renderer render(500, 500);
     mesh floorMesh("../../obj/floor.obj");
+    Shader_Phong shader;
 
-    //render.drawMesh(floorMesh);
+    //shader.model = ...
+    //shader.persp = ...
+    //render.drawMesh(floorMesh, shader); 
 
-    //render.drawTriangle(vec2(180, 50), vec2(150, 1), vec2(70, 180), vec3(255, 255, 0));
     render.filpFrameBuffer();
     render.saveToBmp("out.bmp");
 
