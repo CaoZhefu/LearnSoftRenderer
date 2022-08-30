@@ -99,7 +99,7 @@ public:
     float operator[](const int i) const { assert(i >= 0 && i < 3); return i == 0 ? x : (i == 1 ? y : z); }
     float& operator[](const int i) { assert(i >= 0 && i < 3); return i == 0 ? x : (i == 1 ? y : z); }
     float length() { return std::sqrt(*this * *this); }
-        void normalize() { 
+    void normalize() { 
         float len = length();
         if(len > 0.f){
             x /= len;
@@ -116,35 +116,33 @@ typedef vec<3> vec3;
 typedef vec<4> vec4;
 
 vec3 cross(const vec3& v1, const vec3& v2);
+vec3 normalized(const vec3& v);
 
 template<int nRow, int nCol>
 class mat
 {
 public:
-    vec<nCol> rows[nRow] = {{}};
+    vec<nCol> rows[nRow] = {{0}};
     vec<nCol>& operator[](const int i) { assert(i >= 0 && i < nRow); return rows[i]; }
     const vec<nCol>& operator[](const int i) const { assert(i >= 0 && i < nRow); return rows[i]; }
 
-    vec<nRow> col(int col_idx) const
-    {
+    vec<nRow> getCol(int col_idx) const {
         vec<nRow> ret;
         for(int i = 0; i < nRow; ++i){
             ret[i] = rows[i][col_idx];
         }
         return ret;
     }
-
-    static mat<nRow, nCol> get_identity()
-    {
-        mat<nRow, nCol> ret;
-        for(int i = 0; i < nRow; ++i){
-            for(int j = 0; j < nCol; ++j){
-                ret[i][j] = (i == j ? 1.0f : 0.0f);
-            }
-        }
-        return ret;
-    }
 };
+
+typedef mat<4, 4> mat4;
+
+inline mat4 getIdentityMatrix();
+inline mat4 getTranslateMatrix(float x, float y, float z);
+inline mat4 getScaleMatrix(float x, float y, float z);
+//mat4 getRotateMatrix();
+mat4 lookat(vec3 eye, vec3 center, vec3 up);
+mat4 getPerspectiveMatrix(float fov, float aspect, float znear, float zfar);
 
 template<int nRow, int nCol> vec<nRow> operator*(const mat<nRow, nCol>& lhs, const vec<nCol>& rhs)
 {
@@ -181,8 +179,6 @@ template<int nRow, int nCol> mat<nRow, nCol> operator-(const mat<nRow, nCol>& lh
             ret[i][j] -= rhs[i][j];
     return ret;
 }
-
-typedef mat<4, 4> mat4;
 
 template<int nRow, int nCol> std::ostream& operator<<(std::ostream& out, const mat<nRow, nCol>& m)
 {
