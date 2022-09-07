@@ -2,7 +2,9 @@
 
 void Shader_Phong::vert(vec3 inPos, vec4& outClipPos) {
     vec4 p(inPos.x, inPos.y, inPos.z, 1.0);
-    outClipPos = persp * view * model * p;
+    mat4 mvp = persp * view * model;
+    vec4 ret = mvp * p;
+    outClipPos = ret;
 }
 
 void Shader_Phong::frag(vec4 inClipPos, vec4& outColor) {

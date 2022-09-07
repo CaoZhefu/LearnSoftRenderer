@@ -1,17 +1,17 @@
 #pragma once
 
 #include "MathUtils.h"
-#include "ThirdParty/stb_image_write.h"
 #include "mesh.h"
 #include "shader.h"
 
 #include <string>
 #include <fstream>
+#include "ThirdParty/stb_image_write.h"
 
 struct camera
 {
     vec3 pos;
-    vec3 front;
+    vec3 lookPoint;
     vec3 up;
 };
 
@@ -24,13 +24,19 @@ public:
 
     camera renderCam;
 
+    bool render_frame;
+    vec3 frame_color;
+
     renderer(int w, int h) : width(w), height(h){
         frameBuffer = new vec3[w * h];
         zBuffer = new float[w * h];
 
-        renderCam.pos = vec3(0.f, 0.f, 0.f);
-        renderCam.front = vec3(0.f, 0.f, -1.f); // default point to -z
-        renderCam.up = vec3(0.f, 1.f, 0.f); // default up
+        renderCam.pos = vec3(1.f, 1.f, 3.f);
+        renderCam.lookPoint = vec3(0.f, 0.f, 0.f);
+        renderCam.up = vec3(0.f, 1.f, 0.f);
+
+        render_frame = true;
+        frame_color = vec3(255, 255, 255);
     }
 
     void fill(const vec3& color);

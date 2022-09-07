@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "MathUtils.h"
-#include "ThirdParty/stb_image.h"
 
 using std::vector;
 using std::string;

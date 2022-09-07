@@ -11,6 +11,8 @@ void renderer::drawPixel(int x, int y, const vec3& color){
 }
 
 void renderer::drawLine(int x1, int y1, int x2, int y2, const vec3& color) {
+    std::cout << "drawLine :(" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << std::endl;
+
     bool steep = false;
     // traverse by X or Y
     if(std::abs(x2 - x1) < std::abs(y2 - y1)){
@@ -110,9 +112,39 @@ void renderer::drawMesh(const mesh& model, IShader& shader) {
         for(int j = 0; j < 3; ++j)
             shader.vert(originVerts[j], clipPos[j]);
 
-        // 3. rasterize to screen, check zbuffer
+        // 3. clip
+        bool isDiscard = false;
+        for(int j = 0; j < 3; ++j)
+        {
+            vec4& vertex = clipPos[j];
+            float w = vertex.w;
+            if(w == 0.f /*|| vertex.z < 0.f || vertex.z > w || vertex.x < -w || vertex.x > w || vertex.y < -w || vertex.y > w*/)
+            {
+                isDiscard = true;
+                break;
+            }
+            // normalized to (-1, 1)
+            vertex = vertex / w;  
+        }
+        if(isDiscard)
+            continue;
 
-        // 4. shading by frag shader
+        // 4. transfer to viewport
+        vec2 viewportPos[3];
+        for(int j = 0; j < 3; ++j)
+        {
+            viewportPos[j].x = (clipPos[j].x + 1.f) * width * 0.5f;
+            viewportPos[j].y = (1.f - clipPos[j].y) * height * 0.5f;
+        }
+
+        // render frame
+        if(render_frame)
+        {
+            drawLine(round(viewportPos[0].x), round(viewportPos[0].y), round(viewportPos[1].x), round(viewportPos[1].y), frame_color);
+            drawLine(round(viewportPos[0].x), round(viewportPos[0].y), round(viewportPos[2].x), round(viewportPos[2].y), frame_color);
+            drawLine(round(viewportPos[2].x), round(viewportPos[2].y), round(viewportPos[1].x), round(viewportPos[1].y), frame_color);
+            return;
+        }
     }
 }
 

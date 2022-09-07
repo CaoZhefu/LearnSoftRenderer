@@ -14,7 +14,7 @@ template<int n>
 class vec
 {
 public:
-    vec() = default;
+    vec() { for(int i = 0; i < n; ++i) data[i] = 0.f; }
     float operator[](const int i) const { assert(i >= 0 && i < n); return data[i]; }
     float& operator[](const int i) { assert(i >= 0 && i < n); return data[i]; }
     float length() { std::sqrt(*this * *this); }
@@ -80,7 +80,7 @@ template<int n> std::ostream& operator<<(std::ostream& out, const vec<n>& v)
 template<> class vec<2>
 {
 public:
-    vec() = default;
+    vec() { x = 0.f; y = 0.f; }
     vec(float x, float y) : x(x), y(y) {}
     float operator[](const int i) const { assert(i >= 0 && i < 2); return i == 0 ? x : y; }
     float& operator[](const int i) { assert(i >= 0 && i < 2); return i == 0 ? x : y; }
@@ -99,7 +99,7 @@ public:
 template<> class vec<3>
 {
 public:
-    vec() = default;
+    vec() { x = 0.f; y = 0.f; z = 0.f; }
     vec(float x, float y, float z) : x(x), y(y), z(z) {}
     float operator[](const int i) const { assert(i >= 0 && i < 3); return i == 0 ? x : (i == 1 ? y : z); }
     float& operator[](const int i) { assert(i >= 0 && i < 3); return i == 0 ? x : (i == 1 ? y : z); }
@@ -119,7 +119,7 @@ public:
 template<> class vec<4>
 {
 public:
-    vec() = default;
+    vec() { x = 0.f; y = 0.f; z = 0.f; w = 1.f; }
     vec(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
     float operator[](const int i) const { 
         assert(i >= 0 && i < 4);
@@ -165,7 +165,7 @@ template<int nRow, int nCol>
 class mat
 {
 public:
-    vec<nCol> rows[nRow] = {{0}};
+    vec<nCol> rows[nRow] = {{}};
     vec<nCol>& operator[](const int i) { assert(i >= 0 && i < nRow); return rows[i]; }
     const vec<nCol>& operator[](const int i) const { assert(i >= 0 && i < nRow); return rows[i]; }
 
@@ -201,7 +201,7 @@ template<int R1, int C1, int C2> mat<R1, C2> operator*(const mat<R1, C1>& lhs, c
     mat<R1, C2> ret;
     for(int i = 0; i < R1; ++i)
         for(int j = 0; j < C2; ++j)
-            ret[i][j] = lhs[i] * rhs.col(j);
+            ret[i][j] = lhs[i] * rhs.getCol(j);
     return ret;
 }
 
