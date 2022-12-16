@@ -101,16 +101,24 @@ void renderer::drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color) {
 
 void renderer::drawMesh(const mesh& model, IShader& shader) {
     // render per face
+    std::cout << "start draw mesh, face num " << std::to_string(model.faceNum()) << std::endl;
+
     for(int i = 0; i < model.faceNum(); ++i) {
+        std::cout << "face " << std::to_string(i) << " start draw" << std::endl;
+
         // 1. get face vertexs 
         vec3 originVerts[3];
         for(int j = 0; j < 3; ++j)
             originVerts[j] = model.getVertex(i, j);
 
+        std::cout << "origin verts : " << originVerts[0].tostring() << " , " << originVerts[1].tostring() << " , " << originVerts[2].tostring() << std::endl;
+
         // 2. transform to clip coordinates
         vec4 clipPos[3];
         for(int j = 0; j < 3; ++j)
             shader.vert(originVerts[j], clipPos[j]);
+
+        std::cout << "clip verts : " << clipPos[0].tostring() << " , " << clipPos[1].tostring() << " , " << clipPos[2].tostring() << std::endl;
 
         // 3. clip
         bool isDiscard = false;
@@ -127,8 +135,11 @@ void renderer::drawMesh(const mesh& model, IShader& shader) {
             vertex = vertex / w;  
         }
         if(isDiscard)
+        {
+            std::cout << "face " << std::to_string(i) << " discard" << std::endl;
             continue;
-
+        }
+        
         // 4. transfer to viewport
         vec2 viewportPos[3];
         for(int j = 0; j < 3; ++j)
@@ -143,7 +154,6 @@ void renderer::drawMesh(const mesh& model, IShader& shader) {
             drawLine(round(viewportPos[0].x), round(viewportPos[0].y), round(viewportPos[1].x), round(viewportPos[1].y), frame_color);
             drawLine(round(viewportPos[0].x), round(viewportPos[0].y), round(viewportPos[2].x), round(viewportPos[2].y), frame_color);
             drawLine(round(viewportPos[2].x), round(viewportPos[2].y), round(viewportPos[1].x), round(viewportPos[1].y), frame_color);
-            return;
         }
     }
 }

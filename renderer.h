@@ -31,7 +31,7 @@ public:
         frameBuffer = new vec3[w * h];
         zBuffer = new float[w * h];
 
-        renderCam.pos = vec3(1.f, 1.f, 3.f);
+        renderCam.pos = vec3(1.f, 1.f, 1.f);
         renderCam.lookPoint = vec3(0.f, 0.f, 0.f);
         renderCam.up = vec3(0.f, 1.f, 0.f);
 

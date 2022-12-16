@@ -2,6 +2,7 @@
 
 #include<cassert>
 #include<iostream>
+#include <string>
 
 float frac(float t);
 
@@ -93,6 +94,8 @@ public:
         }
     }
 
+    std::string tostring() const { return "(" + std::to_string(x) + "," + std::to_string(y) + ")"; }
+
     float x, y;
 };
 
@@ -112,6 +115,8 @@ public:
             z /= len;
         }
     }
+
+    std::string tostring() const { return "(" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ")"; }
 
     float x, y, z;
 };
@@ -150,6 +155,8 @@ public:
             z /= len;
         }
     }
+
+    std::string tostring() const { return "(" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "," + std::to_string(w) + ")"; }
 
     float x, y, z, w;
 };
