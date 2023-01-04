@@ -1,8 +1,8 @@
 #pragma once
 
 #include<string>
-#include "MathUtils.h"
-#include "ThirdParty/stb_image.h"
+#include "math/MathUtils.h"
+#include "stb_image.h"
 
 using std::string;
 

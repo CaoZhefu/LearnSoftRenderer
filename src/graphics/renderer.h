@@ -1,12 +1,12 @@
 #pragma once
 
-#include "MathUtils.h"
+#include "math/MathUtils.h"
 #include "mesh.h"
 #include "shader.h"
 
 #include <string>
 #include <fstream>
-#include "ThirdParty/stb_image_write.h"
+#include "stb_image_write.h"
 
 struct camera
 {

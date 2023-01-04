@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "MathUtils.h"
+#include "math/MathUtils.h"
 
 using std::vector;
 using std::string;
