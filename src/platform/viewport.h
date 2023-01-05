@@ -2,23 +2,28 @@
 
 #include <string>
 #include <windows.h>
+#include "graphics/texture.h"
+#include "graphics/renderer.h"
 
 class viewport
 {
 public:
-    unsigned int width, height;
+    viewport();
 
-    bool init(unsigned int _width, unsigned int _height, const char* _title);
+    int width, height;
+    bool shouldClose;
 
-    bool shouldClose();
-
+    bool init(int _width, int _height, const char* _title);
     void destroy();
+
+    void renderCopy(renderer* r);
+    void updateBuffers();
+    void pollEvents();
 
 private:
     static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     HWND windowHandle;
     HDC memoryDC;
-
-    //static HWND createWindow(unsigned int _width, unsigned int _height, const char* _title);
+    texture* frameTexture;
 };

@@ -1,11 +1,36 @@
 #include "texture.h"
 
-void texture::loadFile(const string& path) {
+texture::texture(const string &path)
+{
+    loadFile(path);
+}
+
+texture::texture(int _width, int _height, int _channelCnt)
+{
+    if(_width <= 0 || _height <= 0 || _channelCnt <= 0 || _channelCnt > 4)
+    {
+        std::cerr << "texture constructor error : invalid arguments" << std::endl;
+    }
+
+    this->width = _width;
+    this->height = _height;
+    this->channelCnt = _channelCnt;
+    int size = _width * _height * _channelCnt;
+    this->data = (unsigned char*)malloc(size * sizeof(unsigned char));
+    bLoadFromFile = false;
+}
+
+void texture::loadFile(const string &path)
+{
     data = stbi_load(path.c_str(), &width, &height, &channelCnt, 0);
 
     if(!data)
     {
         std::cerr << "Texture load failed at path: " << path << std::endl;
+    }
+    else
+    {
+        bLoadFromFile = true;
     }
 }
 
@@ -50,4 +75,12 @@ vec4 texture::get(int x, int y) {
     }
 
     return ret;
+}
+
+void texture::clearData()
+{
+    if(data)
+    {
+        bLoadFromFile ? stbi_image_free(data) : free(data);
+    }
 }

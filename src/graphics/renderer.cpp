@@ -2,16 +2,25 @@
 
 void renderer::fill(const vec3& color) {
     for(int i = 0; i < width * height; ++i)
-        frameBuffer[i] = color;
+    {
+        frameBuffer[i * 3 + 0] = (unsigned char)color.x;
+        frameBuffer[i * 3 + 1] = (unsigned char)color.y;
+        frameBuffer[i * 3 + 2] = (unsigned char)color.z;
+    }
 }
 
 void renderer::drawPixel(int x, int y, const vec3& color){
     if(x >= 0 && x < width && y >= 0 && y < height)
-        frameBuffer[width * y + x] = color;
+    {
+        int index = width * y + x;
+        frameBuffer[index * 3 + 0] = (unsigned char)color.x;
+        frameBuffer[index * 3 + 1] = (unsigned char)color.y;
+        frameBuffer[index * 3 + 2] = (unsigned char)color.z;
+    }  
 }
 
 void renderer::drawLine(int x1, int y1, int x2, int y2, const vec3& color) {
-    std::cout << "drawLine :(" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << std::endl;
+    //std::cout << "drawLine :(" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << std::endl;
 
     bool steep = false;
     // traverse by X or Y
@@ -167,16 +176,4 @@ void renderer::filpFrameBuffer() {
         }
         ++i; --j;
     }
-}
-
-void renderer::saveToBmp(const std::string& path) {
-    unsigned char* data = new unsigned char[width * height * 3];
-    for(int i = 0; i < width * height; ++i){
-        data[i * 3 + 0] = (unsigned char)frameBuffer[i].x;
-        data[i * 3 + 1] = (unsigned char)frameBuffer[i].y;
-        data[i * 3 + 2] = (unsigned char)frameBuffer[i].z;
-    }
-
-    stbi_write_bmp(path.c_str(), width, height, 3, data);
-    delete data;
 }

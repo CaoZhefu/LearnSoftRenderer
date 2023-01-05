@@ -6,7 +6,6 @@
 
 #include <string>
 #include <fstream>
-#include "stb_image_write.h"
 
 struct camera
 {
@@ -19,7 +18,7 @@ class renderer
 {
 public:
     int width, height;
-    vec3* frameBuffer;
+    unsigned char* frameBuffer;
     float* zBuffer;
 
     camera renderCam;
@@ -27,9 +26,11 @@ public:
     bool render_frame;
     vec3 frame_color;
 
-    renderer(int w, int h) : width(w), height(h){
-        frameBuffer = new vec3[w * h];
-        zBuffer = new float[w * h];
+    renderer(int w, int h) {
+        width = w;
+        height = h;
+        frameBuffer = new unsigned char[width * height * 3];
+        zBuffer = new float[width * height];
 
         renderCam.pos = vec3(3.5f, 0.f, 0.f);
         renderCam.lookPoint = vec3(0.f, 0.f, 0.f);
@@ -46,7 +47,6 @@ public:
     void drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color);
     void drawMesh(const mesh& model, IShader& shader);
     void filpFrameBuffer();
-    void saveToBmp(const std::string& path);
 
     ~renderer(){
         delete[] frameBuffer;
