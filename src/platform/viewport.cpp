@@ -1,5 +1,5 @@
 #include "viewport.h"
-#include <assert.h>
+#include <cassert>
 
 static const char* const WINDOW_CLASS_NAME = "WindowClass";
 static const char* const WINDOW_ENTRY_NAME = "WindowEntry";

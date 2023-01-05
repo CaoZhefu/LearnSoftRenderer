@@ -1,4 +1,4 @@
-#include "MathUtils.h"
+#include "mathUtils.h"
 
 float frac(float t) {
     float r = t - (int)t;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/MathUtils.h"
+#include "math/mathUtils.h"
 #include "texture.h"
 
 class IShader

@@ -4,7 +4,7 @@ project(SoftRenderer VERSION 0.1.0)
 # file(GLOB SOURCES "ThirdParty/*.h" "src/math/*.cpp" "src/graphics/*.cpp" "src/platform/*.cpp" "src/*.cpp")
 
 set(SOURCES 
-    src/math/MathUtils.cpp
+    src/math/mathUtils.cpp
     src/graphics/texture.cpp
     src/graphics/shader.cpp
     src/graphics/mesh.cpp

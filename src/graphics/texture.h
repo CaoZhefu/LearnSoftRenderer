@@ -1,7 +1,7 @@
 #pragma once
 
 #include<string>
-#include "math/MathUtils.h"
+#include "math/mathUtils.h"
 #include "stb_image.h"
 
 using std::string;
