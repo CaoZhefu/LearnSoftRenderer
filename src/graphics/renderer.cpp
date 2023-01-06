@@ -113,21 +113,15 @@ void renderer::drawMesh(const mesh& model, IShader& shader) {
     std::cout << "start draw mesh, face num " << std::to_string(model.faceNum()) << std::endl;
 
     for(int i = 0; i < model.faceNum(); ++i) {
-        std::cout << "face " << std::to_string(i) << " start draw" << std::endl;
-
         // 1. get face vertexs 
         vec3 originVerts[3];
         for(int j = 0; j < 3; ++j)
             originVerts[j] = model.getVertex(i, j);
 
-        std::cout << "origin verts : " << originVerts[0].tostring() << " , " << originVerts[1].tostring() << " , " << originVerts[2].tostring() << std::endl;
-
         // 2. transform to clip coordinates
         vec4 clipPos[3];
         for(int j = 0; j < 3; ++j)
             shader.vert(originVerts[j], clipPos[j]);
-
-        std::cout << "clip verts : " << clipPos[0].tostring() << " , " << clipPos[1].tostring() << " , " << clipPos[2].tostring() << std::endl;
 
         // 3. clip
         bool isDiscard = false;
