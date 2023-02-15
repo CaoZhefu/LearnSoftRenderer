@@ -118,7 +118,7 @@ void renderer::drawMesh(const mesh& model, IShader& shader) {
         for(int j = 0; j < 3; ++j)
             originVerts[j] = model.getVertex(i, j);
 
-        // 2. transform to clip coordinates
+        // 2. apply vertex shader
         vec4 clipPos[3];
         for(int j = 0; j < 3; ++j)
             shader.vert(originVerts[j], clipPos[j]);

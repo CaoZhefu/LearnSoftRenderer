@@ -3,6 +3,7 @@
 #include "root_directory.h"
 #include "platform/viewport.h"
 #include "graphics/renderer.h"
+#include "test/testModel.h"
 
 static int SCREEN_WIDTH = 800;
 static int SCREEN_HEIGHT = 600;
@@ -17,6 +18,8 @@ int main()
     }
 
     renderer r(v.width, v.height);
+
+    mesh cube = TestModel::getTestCube();
 
     // main loop
     while(!v.shouldClose)
