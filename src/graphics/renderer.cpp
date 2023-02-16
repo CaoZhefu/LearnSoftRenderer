@@ -164,7 +164,11 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
         drawLine(int(viewportPos[0].x + 0.5f), int(viewportPos[0].y + 0.5f), int(viewportPos[1].x + 0.5f), int(viewportPos[1].y + 0.5f), frame_color);
         drawLine(int(viewportPos[0].x + 0.5f), int(viewportPos[0].y + 0.5f), int(viewportPos[2].x + 0.5f), int(viewportPos[2].y + 0.5f), frame_color);
         drawLine(int(viewportPos[2].x + 0.5f), int(viewportPos[2].y + 0.5f), int(viewportPos[1].x + 0.5f), int(viewportPos[1].y + 0.5f), frame_color);
+        return true;
     }
+
+    // render pixel
+    
     
     return true;
 }

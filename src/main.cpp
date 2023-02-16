@@ -29,14 +29,13 @@ int main()
     m.facet_vert.push_back(1);
     m.facet_vert.push_back(2);
 
+    r.shader = &shader;
+
     // main loop
     while(!v.shouldClose)
     {
         // render
         r.fill(color4(0, 0, 0, 255));
-        // r.drawLine(0, 0, 100, 200, vec3(255, 0, 0));
-        // r.drawTriangle(vec2(100, 100), vec2(200, 300), vec2(200, 100), vec3(255, 0, 0));
-        r.shader = &shader;
         r.drawMesh(m);
 
         // update viewport
