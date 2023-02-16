@@ -53,13 +53,13 @@ namespace TestModel
             -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
         };
 
-        for(int i = 0; i < cubeVertices.size(); i += 8)
+        for(size_t i = 0; i < cubeVertices.size(); i += 8)
         {
             cube.vertexs.push_back(vec3(cubeVertices[i], cubeVertices[i+1], cubeVertices[i+2]));
             cube.normals.push_back(vec3(cubeVertices[i+3], cubeVertices[i+4], cubeVertices[i+5]));
             cube.texcoords.push_back(vec2(cubeVertices[i+6], cubeVertices[i+7]));
         }
-        for(int i = 0; i <= cubeVertices.size() / 8; ++i)
+        for(size_t i = 0; i <= cubeVertices.size() / 8; ++i)
         {
             cube.facet_vert.push_back(i);
         }

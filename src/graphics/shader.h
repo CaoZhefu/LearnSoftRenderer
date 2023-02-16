@@ -3,24 +3,34 @@
 #include "math/mathUtils.h"
 #include "texture.h"
 
+struct vertexShaderIn
+{
+    vec3 vertex;
+    // vec3 normal;
+    // vec2 uv;
+};
+
+struct vertexShaderOut
+{
+    vec4 pos;
+};
+
 class IShader
 {
 public:
-    virtual void vert(vec3 inPos, vec4& outClipPos) {}
-    virtual void frag(vec4 inClipPos, vec4& outColor) {}
+    virtual void vert(vertexShaderIn& in, vertexShaderOut& out) = 0;
+    virtual vec4 frag(vertexShaderOut& in) = 0;
 };
 
-class Shader_Phong : public IShader
+class Shader_Nothing : public IShader
 {
-public:
-    mat4 model;
-    mat4 view;
-    mat4 persp;
-    texture* diffuseTex;
-    texture* normalTex;
-    vec3 lightPos;
-    vec3 lightColor;
+    virtual void vert(vertexShaderIn& in, vertexShaderOut& out)
+    {
+        out.pos = vec4(in.vertex, 1);
+    }
 
-    virtual void vert(vec3 inPos, vec4& outClipPos);
-    virtual void frag(vec4 inClipPos, vec4& outColor);
+    virtual vec4 frag(vertexShaderOut& in)
+    {
+        return vec4(1, 1, 1, 1);
+    }
 };

@@ -24,7 +24,9 @@ public:
     camera renderCam;
 
     bool render_frame;
-    vec3 frame_color;
+    color4 frame_color;
+
+    IShader* shader;
 
     renderer(int w, int h) {
         width = w;
@@ -37,15 +39,22 @@ public:
         renderCam.up = vec3(0.f, 0.f, 1.f);
 
         render_frame = true;
-        frame_color = vec3(255, 255, 255);
+        frame_color = color4(255, 255, 255, 255);
     }
 
-    void fill(const vec3& color);
-    void drawPixel(int x, int y, const vec3& color);
-    void drawLine(int x1, int y1, int x2, int y2, const vec3& color);
-    void drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const vec3& color);
-    void drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color);
-    void drawMesh(const mesh& model, IShader& shader);
+    // 2D Draw
+    void fill(const color4& color);
+    void drawPixel(int x, int y, const color4& color);
+    void drawLine(int x1, int y1, int x2, int y2, const color4& color);
+    void drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const color4& color);
+    void drawTriangle(vec2 v1, vec2 v2, vec2 v3, const color4& color);
+
+    // 3D draw
+    void drawMesh(const mesh& model);
+private:
+    bool drawPrimitive(std::vector<vertexShaderIn>& vsInContexts);
+
+public:
     void filpFrameBuffer();
 
     ~renderer(){

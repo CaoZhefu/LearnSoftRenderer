@@ -1,25 +1,25 @@
 #include "renderer.h"
 
-void renderer::fill(const vec3& color) {
+void renderer::fill(const color4& color) {
     for(int i = 0; i < width * height; ++i)
     {
-        frameBuffer[i * 3 + 0] = (unsigned char)color.x;
-        frameBuffer[i * 3 + 1] = (unsigned char)color.y;
-        frameBuffer[i * 3 + 2] = (unsigned char)color.z;
+        frameBuffer[i * 3 + 0] = color.r;
+        frameBuffer[i * 3 + 1] = color.g;
+        frameBuffer[i * 3 + 2] = color.b;
     }
 }
 
-void renderer::drawPixel(int x, int y, const vec3& color){
+void renderer::drawPixel(int x, int y, const color4& color){
     if(x >= 0 && x < width && y >= 0 && y < height)
     {
         int index = width * y + x;
-        frameBuffer[index * 3 + 0] = (unsigned char)color.x;
-        frameBuffer[index * 3 + 1] = (unsigned char)color.y;
-        frameBuffer[index * 3 + 2] = (unsigned char)color.z;
+        frameBuffer[index * 3 + 0] = color.r;
+        frameBuffer[index * 3 + 1] = color.g;
+        frameBuffer[index * 3 + 2] = color.b;
     }  
 }
 
-void renderer::drawLine(int x1, int y1, int x2, int y2, const vec3& color) {
+void renderer::drawLine(int x1, int y1, int x2, int y2, const color4& color) {
     //std::cout << "drawLine :(" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << std::endl;
 
     bool steep = false;
@@ -58,7 +58,7 @@ void renderer::drawLine(int x1, int y1, int x2, int y2, const vec3& color) {
     }
 }
 
-void renderer::drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const vec3& color) {
+void renderer::drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const color4& color) {
     // sort vertex by Y
     if(v1.y > v2.y) std::swap(v1, v2);
     if(v1.y > v3.y) std::swap(v1, v3);
@@ -90,7 +90,7 @@ void renderer::drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const vec3& col
     }
 }
 
-void renderer::drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color) {
+void renderer::drawTriangle(vec2 v1, vec2 v2, vec2 v3, const color4& color) {
     vec2 bboxmin(width - 1, height - 1);
     vec2 bboxmax(0, 0);
     bboxmin.x = std::max(0.f, std::min(v1.x, std::min(v2.x, v3.x)));
@@ -103,62 +103,70 @@ void renderer::drawTriangle(vec2 v1, vec2 v2, vec2 v3, const vec3& color) {
         for(p.y = bboxmin.y; p.y <= bboxmax.y; p.y++){
             vec3 bc = barycentric(v1, v2, v3, p);
             if(bc.x < 0 || bc.y < 0 || bc.z < 0) continue;
-            drawPixel(p.x, p.y, color);
+            drawPixel((int)(p.x + 0.5f), (int)(p.y + 0.5f), color);
         }
     }
 }
 
-void renderer::drawMesh(const mesh& model, IShader& shader) {
-    // render per face
-    std::cout << "start draw mesh, face num " << std::to_string(model.faceNum()) << std::endl;
+void renderer::drawMesh(const mesh& model) {
+    if(shader == nullptr)
+    {
+        std::cerr << "renderer::drawMesh Failed, Shader is Null!" << std::endl;
+        return;
+    }
 
     for(int i = 0; i < model.faceNum(); ++i) {
-        // 1. get face vertexs 
-        vec3 originVerts[3];
-        for(int j = 0; j < 3; ++j)
-            originVerts[j] = model.getVertex(i, j);
-
-        // 2. apply vertex shader
-        vec4 clipPos[3];
-        for(int j = 0; j < 3; ++j)
-            shader.vert(originVerts[j], clipPos[j]);
-
-        // 3. clip
-        bool isDiscard = false;
-        for(int j = 0; j < 3; ++j)
-        {
-            vec4& vertex = clipPos[j];
-            float w = vertex.w;
-            if(w == 0.f /*|| vertex.z < 0.f || vertex.z > w || vertex.x < -w || vertex.x > w || vertex.y < -w || vertex.y > w*/)
-            {
-                isDiscard = true;
-                break;
-            }
-            // normalized to (-1, 1)
-            vertex = vertex / w;  
+        // draw each primitive
+        std::vector<vertexShaderIn> contexts(3);
+        for(int j = 0; j < 3; ++j) {
+            contexts[j].vertex = model.getVertex(i, j);
         }
-        if(isDiscard)
-        {
-            std::cout << "face " << std::to_string(i) << " discard" << std::endl;
-            continue;
-        }
-        
-        // 4. transfer to viewport
-        vec2 viewportPos[3];
-        for(int j = 0; j < 3; ++j)
-        {
-            viewportPos[j].x = (clipPos[j].x + 1.f) * width * 0.5f;
-            viewportPos[j].y = (1.f - clipPos[j].y) * height * 0.5f;
-        }
-
-        // render frame
-        if(render_frame)
-        {
-            drawLine(round(viewportPos[0].x), round(viewportPos[0].y), round(viewportPos[1].x), round(viewportPos[1].y), frame_color);
-            drawLine(round(viewportPos[0].x), round(viewportPos[0].y), round(viewportPos[2].x), round(viewportPos[2].y), frame_color);
-            drawLine(round(viewportPos[2].x), round(viewportPos[2].y), round(viewportPos[1].x), round(viewportPos[1].y), frame_color);
-        }
+        drawPrimitive(contexts);
     }
+}
+
+bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
+{
+    if(vsInContexts.size() != 3)
+        return false;
+
+    // 1. run vertex shader
+    std::vector<vertexShaderOut> vsOutContexts(3);
+    for(int i = 0; i < 3; ++i)
+    {
+        shader->vert(vsInContexts[i], vsOutContexts[i]);
+    }
+
+    // 2. clip
+    for(int i = 0; i < 3; ++i)
+    {
+        vec4& pos = vsOutContexts[i].pos;
+        float w = pos.w;
+        if(pos.w == 0.f || pos.z < 0.f || pos.z > w || pos.x < -w || pos.x > w || pos.y < -w || pos.y > w)
+        {
+            // discard primitive
+            return false;
+        }
+        // 透视除法
+        pos = pos / w;
+    }
+    
+    // 3. transfer to viewport
+    vec2 viewportPos[3];
+    for(int i = 0; i < 3; ++i)
+    {
+        viewportPos[i].x = (vsOutContexts[i].pos.x + 1.f) * (float)width * 0.5f;
+        viewportPos[i].y = (1.f - vsOutContexts[i].pos.y) * (float)height * 0.5f;
+    }
+
+    if(render_frame)
+    {
+        drawLine(int(viewportPos[0].x + 0.5f), int(viewportPos[0].y + 0.5f), int(viewportPos[1].x + 0.5f), int(viewportPos[1].y + 0.5f), frame_color);
+        drawLine(int(viewportPos[0].x + 0.5f), int(viewportPos[0].y + 0.5f), int(viewportPos[2].x + 0.5f), int(viewportPos[2].y + 0.5f), frame_color);
+        drawLine(int(viewportPos[2].x + 0.5f), int(viewportPos[2].y + 0.5f), int(viewportPos[1].x + 0.5f), int(viewportPos[1].y + 0.5f), frame_color);
+    }
+    
+    return true;
 }
 
 void renderer::filpFrameBuffer() {
