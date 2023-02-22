@@ -139,6 +139,8 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
     if(vsInContexts.size() != 3)
         return false;
 
+    // std::cout << "draw primitive ";
+
     // run vertex shader
     std::vector<vertexShaderOut> vsOutContexts(3);
     for(int i = 0; i < 3; ++i)
@@ -201,6 +203,7 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
     if(area <= 0) return false;
 
     // 遍历外接矩形
+    // std::cout << "all pixels : " << (max_y - min_y) * (max_x - min_x) << std::endl;
     for(int y = min_y; y <= max_y; ++y)
     {
         for(int x = min_x; x <= max_x; ++x)
@@ -243,11 +246,7 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
 
             // run pixel shader
             vec4 color = shader->frag(fragmentShaderIn);
-            color4 finalColor;
-            finalColor.r = (unsigned char)(color.r * 255);
-            finalColor.g = (unsigned char)(color.g * 255);
-            finalColor.b = (unsigned char)(color.b * 255);
-            finalColor.a = (unsigned char)(color.a * 255);
+            color4 finalColor = colorFromVec01(color);
 
             drawPixel(x, y, finalColor);
         }

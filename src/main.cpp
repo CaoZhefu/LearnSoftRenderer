@@ -31,6 +31,9 @@ int main()
     m.facet_vert.push_back(0);
     m.facet_vert.push_back(1);
     m.facet_vert.push_back(2);
+    m.facet_texcoord.push_back(0);
+    m.facet_texcoord.push_back(1);
+    m.facet_texcoord.push_back(2);
 
     r.shader = &shader;
     // r.render_frame = true;

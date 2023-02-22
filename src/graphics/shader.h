@@ -33,6 +33,6 @@ class Shader_Nothing : public IShader
 
     virtual vec4 frag(vertexShaderOut& in)
     {
-        return vec4(in.uv.u, in.uv.v, 1, 1);
+        return vec4(in.uv.u, in.uv.v, 0, 1);
     }
 };

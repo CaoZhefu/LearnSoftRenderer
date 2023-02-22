@@ -27,10 +27,10 @@ vec3 barycentric(vec2& A, vec2& B, vec2& C, vec2& p) {
 color4 colorFromVec01(const vec4& color01)
 {
     color4 finalColor;
-    finalColor.r = (unsigned char)(color01.r * 255);
-    finalColor.g = (unsigned char)(color01.g * 255);
-    finalColor.b = (unsigned char)(color01.b * 255);
-    finalColor.a = (unsigned char)(color01.a * 255);
+    finalColor.r = (unsigned char)(color01.r * 254.99f);
+    finalColor.g = (unsigned char)(color01.g * 254.99f);
+    finalColor.b = (unsigned char)(color01.b * 254.99f);
+    finalColor.a = (unsigned char)(color01.a * 254.99f);
     return finalColor;
 }
 
