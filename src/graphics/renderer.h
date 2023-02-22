@@ -38,7 +38,7 @@ public:
         renderCam.lookPoint = vec3(0.f, 0.f, 0.f);
         renderCam.up = vec3(0.f, 0.f, 1.f);
 
-        render_frame = true;
+        render_frame = false;
         frame_color = color4(255, 255, 255, 255);
     }
 
@@ -56,6 +56,7 @@ private:
 
 public:
     void filpFrameBuffer();
+    void clearDepthBuffer();
 
     ~renderer(){
         delete[] frameBuffer;

@@ -71,6 +71,9 @@ vec3 mesh::getVertex(const int face_idx, const int offset) const {
 }
 
 vec2 mesh::getTexcoord(const int face_idx, const int offset) const {
+    if(facet_texcoord.size() <= face_idx * 3 + offset)
+        return vec2(0.f, 0.f);
+
     return texcoords[facet_texcoord[face_idx * 3 + offset]];
 }
 

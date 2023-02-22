@@ -24,14 +24,16 @@ void renderer::drawLine(int x1, int y1, int x2, int y2, const color4& color) {
 
     bool steep = false;
     // traverse by X or Y
-    if(std::abs(x2 - x1) < std::abs(y2 - y1)){
+    if(std::abs(x2 - x1) < std::abs(y2 - y1))
+    {
         std::swap(x1, y1);
         std::swap(x2, y2);
         steep = true;
     }
 
     // traverse from smaller value
-    if(x2 < x1){
+    if(x2 < x1)
+    {
         std::swap(x1, x2);
         std::swap(y1, y2);
     }
@@ -43,7 +45,8 @@ void renderer::drawLine(int x1, int y1, int x2, int y2, const color4& color) {
     int de2 = std::abs(dy) * 2;
     int e2 = 0;
     int y = y1;
-    for(int x = x1; x <= x2; ++x){
+    for(int x = x1; x <= x2; ++x)
+    {
         (steep ? drawPixel(y, x, color) : drawPixel(x, y, color));
         // e += de;
         // if(e > 0.5f){
@@ -67,7 +70,8 @@ void renderer::drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const color4& c
 
     // draw bottom part
     int bottom_height = v2.y - v1.y + 1;
-    for(int y = v1.y; y <= v2.y; ++y){
+    for(int y = v1.y; y <= v2.y; ++y)
+    {
         float a1 = (float)(y - v1.y) / total_height;
         float a2 = (float)(y - v1.y) / bottom_height;
         vec2 A = v1 + (v3 - v1) * a1;
@@ -79,7 +83,8 @@ void renderer::drawTriangle_lineSweep(vec2 v1, vec2 v2, vec2 v3, const color4& c
 
     // draw upper part
     int upper_height = v3.y - v2.y + 1;
-    for(int y = v2.y; y <= v3.y; ++y){
+    for(int y = v2.y; y <= v3.y; ++y)
+    {
         float a1 = (float)(y - v1.y) / total_height;
         float a2 = (float)(y - v2.y) / upper_height;
         vec2 A = v1 + (v3 - v1) * a1;
@@ -99,8 +104,10 @@ void renderer::drawTriangle(vec2 v1, vec2 v2, vec2 v3, const color4& color) {
     bboxmax.y = std::min((float)(height - 1), std::max(v1.y, std::max(v2.y, v3.y)));
 
     vec2 p;
-    for(p.x = bboxmin.x; p.x <= bboxmax.x; p.x++){
-        for(p.y = bboxmin.y; p.y <= bboxmax.y; p.y++){
+    for(p.x = bboxmin.x; p.x <= bboxmax.x; p.x++) 
+    {
+        for(p.y = bboxmin.y; p.y <= bboxmax.y; p.y++) 
+        {
             vec3 bc = barycentric(v1, v2, v3, p);
             if(bc.x < 0 || bc.y < 0 || bc.z < 0) continue;
             drawPixel((int)(p.x + 0.5f), (int)(p.y + 0.5f), color);
@@ -115,11 +122,13 @@ void renderer::drawMesh(const mesh& model) {
         return;
     }
 
-    for(int i = 0; i < model.faceNum(); ++i) {
+    for(int i = 0; i < model.faceNum(); ++i) 
+    {
         // draw each primitive
         std::vector<vertexShaderIn> contexts(3);
         for(int j = 0; j < 3; ++j) {
             contexts[j].vertex = model.getVertex(i, j);
+            contexts[j].uv = model.getTexcoord(i, j);
         }
         drawPrimitive(contexts);
     }
@@ -130,14 +139,15 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
     if(vsInContexts.size() != 3)
         return false;
 
-    // 1. run vertex shader
+    // run vertex shader
     std::vector<vertexShaderOut> vsOutContexts(3);
     for(int i = 0; i < 3; ++i)
     {
         shader->vert(vsInContexts[i], vsOutContexts[i]);
     }
 
-    // 2. clip
+    // clip
+    float reverseW[3];
     for(int i = 0; i < 3; ++i)
     {
         vec4& pos = vsOutContexts[i].pos;
@@ -148,27 +158,100 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
             return false;
         }
         // 透视除法
-        pos = pos / w;
+        reverseW[i] = 1.0f / w;
+        pos = pos * reverseW[i];
     }
     
-    // 3. transfer to viewport
+    // transfer to viewport pos
     vec2 viewportPos[3];
+    vec2i viewportPosInt[3];
     for(int i = 0; i < 3; ++i)
     {
         viewportPos[i].x = (vsOutContexts[i].pos.x + 1.f) * (float)width * 0.5f;
         viewportPos[i].y = (1.f - vsOutContexts[i].pos.y) * (float)height * 0.5f;
+        viewportPosInt[i].x = (int)round(viewportPos[i].x);
+        viewportPosInt[i].y = (int)round(viewportPos[i].y);
     }
 
+    // render as frame
     if(render_frame)
     {
-        drawLine(int(viewportPos[0].x + 0.5f), int(viewportPos[0].y + 0.5f), int(viewportPos[1].x + 0.5f), int(viewportPos[1].y + 0.5f), frame_color);
-        drawLine(int(viewportPos[0].x + 0.5f), int(viewportPos[0].y + 0.5f), int(viewportPos[2].x + 0.5f), int(viewportPos[2].y + 0.5f), frame_color);
-        drawLine(int(viewportPos[2].x + 0.5f), int(viewportPos[2].y + 0.5f), int(viewportPos[1].x + 0.5f), int(viewportPos[1].y + 0.5f), frame_color);
+        drawLine(viewportPos[0].x, viewportPos[0].y, viewportPos[1].x, viewportPos[1].y, frame_color);
+        drawLine(viewportPos[0].x, viewportPos[0].y, viewportPos[2].x, viewportPos[2].y, frame_color);
+        drawLine(viewportPos[2].x, viewportPos[2].y, viewportPos[1].x, viewportPos[1].y, frame_color);
         return true;
     }
 
-    // render pixel
+    // 求外接矩形
+    int min_x = width - 1, max_x = 0, min_y = height - 1, max_y = 0;
+    for(int i = 0; i < 3; ++i)
+    {
+        min_x = min_x <= viewportPosInt[i].x ? min_x : viewportPosInt[i].x;
+        max_x = max_x >= viewportPosInt[i].x ? max_x : viewportPosInt[i].x;
+        min_y = min_y <= viewportPosInt[i].y ? min_y : viewportPosInt[i].y;
+        max_y = max_y >= viewportPosInt[i].y ? max_y : viewportPosInt[i].y;
+    }
+
+    vec2i& p0 = viewportPosInt[0];
+    vec2i& p1 = viewportPosInt[1];
+    vec2i& p2 = viewportPosInt[2];
     
+    // 求面积
+    float area = abs(cross(p1 - p0, p2 - p0));
+    if(area <= 0) return false;
+
+    // 遍历外接矩形
+    for(int y = min_y; y <= max_y; ++y)
+    {
+        for(int x = min_x; x <= max_x; ++x)
+        {
+            vec2 pixelCenter((float)x + 0.5f, (float)y + 0.5f);
+
+            // 点到三角形三个顶点的向量
+            vec2 v0 = viewportPos[0] - pixelCenter;
+            vec2 v1 = viewportPos[1] - pixelCenter;
+            vec2 v2 = viewportPos[2] - pixelCenter;
+
+            // 内部三个三角形面积
+            float area_a = abs(cross(v1, v2));  // px-p1-p2
+            float area_b = abs(cross(v2, v0));  // px-p2-p0
+            float area_c = abs(cross(v0, v1));  // px-p0-p1
+            float area_all = area_a + area_b + area_c;
+
+            if(area_all <= 0.f)
+                continue;
+
+            // a + b +c = 1 
+            float a = area_a / area_all;
+            float b = area_b / area_all;
+            float c = area_c / area_all;
+
+            // 插值算当前点的 1/w
+            float rhw = reverseW[0] * a + reverseW[1] * b + reverseW[2] * c;
+
+            // Depth Buffer Test and Write
+            if(rhw < zBuffer[y * width + x]) 
+                continue;
+            zBuffer[y * width + x] = rhw;
+
+            // 当前像素w
+            float w = rhw != 0.f ? 1.0f / rhw : 1.0f;
+
+            // Prepare fragment shader input
+            vertexShaderOut fragmentShaderIn;
+            fragmentShaderIn.uv = vsOutContexts[0].uv * a + vsOutContexts[1].uv * b + vsOutContexts[2].uv * c;
+
+            // run pixel shader
+            vec4 color = shader->frag(fragmentShaderIn);
+            color4 finalColor;
+            finalColor.r = (unsigned char)(color.r * 255);
+            finalColor.g = (unsigned char)(color.g * 255);
+            finalColor.b = (unsigned char)(color.b * 255);
+            finalColor.a = (unsigned char)(color.a * 255);
+
+            drawPixel(x, y, finalColor);
+        }
+    }
     
     return true;
 }
@@ -176,10 +259,18 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
 void renderer::filpFrameBuffer() {
     int i = 0;
     int j = height - 1;
-    while(j > i){
-        for(int x = 0; x < width; ++x){
+    while(j > i)
+    {
+        for(int x = 0; x < width; ++x)
+        {
             std::swap(frameBuffer[x + width * i], frameBuffer[x + width * j]);
         }
         ++i; --j;
     }
+}
+
+void renderer::clearDepthBuffer()
+{
+    for(int i = 0; i < width * height; ++i)
+        zBuffer[i] = 0.0f;
 }

@@ -25,15 +25,22 @@ int main()
     m.vertexs.push_back(vec3(0.5f, 0.5f, 0.5f));
     m.vertexs.push_back(vec3(0.5f, 0.f, 0.5f));
     m.vertexs.push_back(vec3(0.f, 0.f, 0.5f));
+    m.texcoords.push_back(vec2(1.0f, 1.0f));
+    m.texcoords.push_back(vec2(1.0f, 0.0f));
+    m.texcoords.push_back(vec2(0.0f, 0.0f));
     m.facet_vert.push_back(0);
     m.facet_vert.push_back(1);
     m.facet_vert.push_back(2);
 
     r.shader = &shader;
+    // r.render_frame = true;
 
     // main loop
     while(!v.shouldClose)
     {
+        // clear zbuffer
+        r.clearDepthBuffer();
+
         // render
         r.fill(color4(0, 0, 0, 255));
         r.drawMesh(m);

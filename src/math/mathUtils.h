@@ -91,8 +91,8 @@ public:
 
     vec() {}
     vec(T x, T y) : x(x), y(y) {}
-    float operator[](const int i) const { assert(i >= 0 && i < 2); return m[i]; }
-    float& operator[](const int i) { assert(i >= 0 && i < 2); return m[i]; }
+    T operator[](const int i) const { assert(i >= 0 && i < 2); return m[i]; }
+    T& operator[](const int i) { assert(i >= 0 && i < 2); return m[i]; }
     float length() { return std::sqrt(*this * *this); }
     void normalize() { 
         float len = length();
@@ -167,7 +167,16 @@ public:
 typedef vec<4, float> vec4;
 typedef vec<4, unsigned char> color4;
 
-vec3 cross(const vec3& v1, const vec3& v2);
+template<class T>
+inline T cross(const vec<2, T>& v1, const vec<2, T>& v2) {
+    return v1.x * v2.y - v1.y * v2.x;
+}
+
+template<class T>
+inline vec<3, T> cross(const vec<3, T>& v1, const vec<3, T>& v2) {
+    return vec<3, T>{ v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
+}
+
 vec3 normalized(const vec3& v);
 
 template<int nRow, int nCol, class T>
@@ -245,6 +254,9 @@ template<int nRow, int nCol, class T> std::ostream& operator<<(std::ostream& out
 
 // 求三角形ABC中p点重心坐标
 vec3 barycentric(vec2& A, vec2& B, vec2& C, vec2& p);
+
+// 将0-1的向量转换为颜色
+color4 colorFromVec01(const vec4& color01);
 
 template<typename ... Args>
 std::string string_format(const std::string& format, Args ... args){
