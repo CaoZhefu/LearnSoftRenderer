@@ -178,9 +178,9 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
     // render as frame
     if(render_frame)
     {
-        drawLine(viewportPos[0].x, viewportPos[0].y, viewportPos[1].x, viewportPos[1].y, frame_color);
-        drawLine(viewportPos[0].x, viewportPos[0].y, viewportPos[2].x, viewportPos[2].y, frame_color);
-        drawLine(viewportPos[2].x, viewportPos[2].y, viewportPos[1].x, viewportPos[1].y, frame_color);
+        drawLine(viewportPosInt[0].x, viewportPosInt[0].y, viewportPosInt[1].x, viewportPosInt[1].y, frame_color);
+        drawLine(viewportPosInt[0].x, viewportPosInt[0].y, viewportPosInt[2].x, viewportPosInt[2].y, frame_color);
+        drawLine(viewportPosInt[2].x, viewportPosInt[2].y, viewportPosInt[1].x, viewportPosInt[1].y, frame_color);
         return true;
     }
 
@@ -203,7 +203,6 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
     if(area <= 0) return false;
 
     // 遍历外接矩形
-    // std::cout << "all pixels : " << (max_y - min_y) * (max_x - min_x) << std::endl;
     for(int y = min_y; y <= max_y; ++y)
     {
         for(int x = min_x; x <= max_x; ++x)
@@ -214,6 +213,15 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
             vec2 v0 = viewportPos[0] - pixelCenter;
             vec2 v1 = viewportPos[1] - pixelCenter;
             vec2 v2 = viewportPos[2] - pixelCenter;
+
+            // 叉乘判断
+            int cross01 = (x - p0.x) * (p1.y - p0.y) - (y - p0.y) * (p1.x - p0.x);
+            int cross12 = (x - p1.x) * (p2.y - p1.y) - (y - p1.y) * (p2.x - p1.x);
+            int cross20 = (x - p2.x) * (p0.y - p2.y) - (y - p2.y) * (p0.x - p2.x);
+            
+            bool bIn = (cross01 > 0) == (cross12 > 0) && (cross01 > 0) == (cross20 > 0) && (cross12 > 0) == (cross20 > 0);
+            if(!bIn)
+                continue;
 
             // 内部三个三角形面积
             float area_a = abs(cross(v1, v2));  // px-p1-p2
