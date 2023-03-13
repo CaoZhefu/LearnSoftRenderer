@@ -47,13 +47,9 @@ public:
 
     virtual void vert(vertexShaderIn& in, vertexShaderOut& out)
     {
-        std::cout << "vert Shader start, input vertex " << in.vertex << std::endl;
         vec4 worldPos = model * vec4(in.vertex, 1);
-        std::cout << "world Pos : " << worldPos << std::endl;
         vec4 viewPos = view * worldPos;
-        std::cout << "view Pos : " << viewPos << std::endl;
         vec4 clipPos = perspective * viewPos;
-        std::cout << "clip Pos : " << clipPos << std::endl;
         out.pos = clipPos;
         out.uv = in.uv;
     }

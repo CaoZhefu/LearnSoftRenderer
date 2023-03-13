@@ -250,7 +250,7 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
             // 当前像素w
             float w = rhw != 0.f ? 1.0f / rhw : 1.0f;
 
-            // 插值系数 除以各自顶点的w后进行屏幕空间插值再乘以当前w
+            // 透视插值 https://zhuanlan.zhihu.com/p/403259571
             float c0 = reverseW[0] * a * w;
             float c1 = reverseW[1] * b * w;
             float c2 = reverseW[2] * c * w;
