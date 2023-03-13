@@ -89,7 +89,7 @@ public:
         T m[2];
     };
 
-    vec() {}
+    vec() : x(0), y(0) {}
     vec(T x, T y) : x(x), y(y) {}
     T operator[](const int i) const { assert(i >= 0 && i < 2); return m[i]; }
     T& operator[](const int i) { assert(i >= 0 && i < 2); return m[i]; }
@@ -115,7 +115,7 @@ public:
         T m[3];
     };
 
-    vec() {}
+    vec() : x(0), y(0), z(0) {}
     vec(T x, T y, T z) : x(x), y(y), z(z) {}
     T operator[](const int i) const { assert(i >= 0 && i < 3); return m[i]; }
     T& operator[](const int i) { assert(i >= 0 && i < 3); return m[i]; }
@@ -142,7 +142,7 @@ public:
         T m[4];
     };
 
-    vec() {}
+    vec() : x(0), y(0), z(0), w(0) {}
     vec(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
     vec(vec<3, T>& v, T w) : x(v.x), y(v.y), z(v.z), w(w) {}
     T operator[](const int i) const { 
@@ -202,7 +202,7 @@ inline mat4 getIdentityMatrix();
 inline mat4 getTranslateMatrix(float x, float y, float z);
 inline mat4 getScaleMatrix(float x, float y, float z);
 //mat4 getRotateMatrix();
-mat4 lookat(vec3 eye, vec3 center, vec3 up);
+mat4 getViewMatrix(vec3 eye, vec3 center, vec3 up);
 mat4 getPerspectiveMatrix(float fov, float aspect, float znear, float zfar);
 
 template<int nRow, int nCol, class T> vec<nRow, T> operator*(const mat<nRow, nCol, T>& lhs, const vec<nCol, T>& rhs)

@@ -58,34 +58,40 @@ mat4 getScaleMatrix(float x, float y, float z) {
     return ret;
 }
 
-mat4 lookat(vec3 eye, vec3 center, vec3 up) {
-    vec3 f = normalized(center - eye);
-    vec3 s = normalized(cross(up, f));
-    vec3 u = cross(f, s);
+mat4 getViewMatrix(vec3 eye, vec3 center, vec3 up) {
+    vec3 Zaxis = normalized(center - eye);
+    vec3 Xaxis = normalized(cross(Zaxis, up));
+    vec3 Yaxis = cross(Xaxis, Zaxis);
 
+    // 这里观察空间采用右手系，z轴朝向屏幕外，-z轴朝向屏幕内
     mat4 ret = getIdentityMatrix();
-    ret[0][0] = s.x;
-    ret[1][0] = s.y;
-    ret[2][0] = s.z;
-    ret[0][1] = u.x;
-    ret[1][1] = u.y;
-    ret[2][1] = u.z;
-    ret[0][2] = f.x;
-    ret[1][2] = f.y;
-    ret[2][2] = f.z;
-    ret[3][0] = -(s * eye);
-    ret[3][1] = -(u * eye);
-    ret[3][2] = -(f * eye);
+    ret[0][0] = Xaxis.x;
+    ret[0][1] = Xaxis.y;
+    ret[0][2] = Xaxis.z;
+    ret[1][0] = Yaxis.x;
+    ret[1][1] = Yaxis.y;
+    ret[1][2] = Yaxis.z;
+    ret[2][0] = -Zaxis.x;
+    ret[2][1] = -Zaxis.y;
+    ret[2][2] = -Zaxis.z;
+    ret[0][3] = -(Xaxis * eye);
+    ret[1][3] = -(Yaxis * eye);
+    ret[2][3] = (Zaxis * eye);
+
+    //std::cout << " View Matrix: " << std::endl << ret << std::endl;
     return ret;
 }
 
 mat4 getPerspectiveMatrix(float fov, float aspect, float znear, float zfar) {
-    float fax = 1.0f / (float)tan(fov * 0.5f);
+    float tanHalfFov = tan(fov * 0.5f);
+
     mat4 ret;
-    ret[0][0] = fax / aspect;
-    ret[1][1] = fax;
-    ret[2][2] = zfar / (zfar - znear);
-    ret[3][2] = -znear * zfar / (zfar - znear);
-    ret[2][3] = 1.f;
+    ret[0][0] = 1.0f / (aspect * tanHalfFov);
+    ret[1][1] = 1.0f / tanHalfFov;
+    ret[2][2] = - (zfar + znear) / (zfar - znear);
+    ret[2][3] = - (2.0f * znear * zfar) / (zfar - znear);
+    ret[3][2] = - 1.f;
+
+    //std::cout << "Perspective Matrix: " << std::endl << ret << std::endl;
     return ret;
 }

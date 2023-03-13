@@ -34,9 +34,9 @@ public:
         frameBuffer = new unsigned char[width * height * 3];
         zBuffer = new float[width * height];
 
-        renderCam.pos = vec3(3.5f, 0.f, 0.f);
+        renderCam.pos = vec3(3.f, 3.f, 3.f);
         renderCam.lookPoint = vec3(0.f, 0.f, 0.f);
-        renderCam.up = vec3(0.f, 0.f, 1.f);
+        renderCam.up = vec3(0.f, 1.f, 0.f);
 
         render_frame = false;
         frame_color = color4(255, 255, 255, 255);

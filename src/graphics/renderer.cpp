@@ -20,7 +20,7 @@ void renderer::drawPixel(int x, int y, const color4& color){
 }
 
 void renderer::drawLine(int x1, int y1, int x2, int y2, const color4& color) {
-    //std::cout << "drawLine :(" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << std::endl;
+    // std::cout << "drawLine :(" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << std::endl;
 
     bool steep = false;
     // traverse by X or Y
@@ -139,8 +139,6 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
     if(vsInContexts.size() != 3)
         return false;
 
-    // std::cout << "draw primitive ";
-
     // run vertex shader
     std::vector<vertexShaderOut> vsOutContexts(3);
     for(int i = 0; i < 3; ++i)
@@ -209,7 +207,7 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
         {
             vec2 pixelCenter((float)x + 0.5f, (float)y + 0.5f);
 
-            // 点到三角形三个顶点的向量
+            // 当前像素点到三角形三个顶点的向量
             vec2 v0 = viewportPos[0] - pixelCenter;
             vec2 v1 = viewportPos[1] - pixelCenter;
             vec2 v2 = viewportPos[2] - pixelCenter;
@@ -248,9 +246,14 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
             // 当前像素w
             float w = rhw != 0.f ? 1.0f / rhw : 1.0f;
 
+            // 插值系数 除以各自顶点的w后进行屏幕空间插值再乘以当前w
+            float c0 = reverseW[0] * a * w;
+            float c1 = reverseW[1] * b * w;
+            float c2 = reverseW[2] * c * w;
+
             // Prepare fragment shader input
             vertexShaderOut fragmentShaderIn;
-            fragmentShaderIn.uv = vsOutContexts[0].uv * a + vsOutContexts[1].uv * b + vsOutContexts[2].uv * c;
+            fragmentShaderIn.uv = vsOutContexts[0].uv * c0 + vsOutContexts[1].uv * c1 + vsOutContexts[2].uv * c2;
 
             // run pixel shader
             vec4 color = shader->frag(fragmentShaderIn);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #define STB_IMAGE_IMPLEMENTATION
 #include "root_directory.h"
 #include "platform/viewport.h"
@@ -19,35 +20,25 @@ int main()
 
     renderer r(v.width, v.height);
 
-    // mesh cube = TestModel::getTestCube();
-    Shader_Nothing shader;
-    mesh m;
-    m.vertexs.push_back(vec3(0.5f, 0.5f, 0.5f));
-    m.vertexs.push_back(vec3(0.5f, 0.f, 0.5f));
-    m.vertexs.push_back(vec3(0.f, 0.f, 0.5f));
-    m.texcoords.push_back(vec2(1.0f, 1.0f));
-    m.texcoords.push_back(vec2(1.0f, 0.0f));
-    m.texcoords.push_back(vec2(0.0f, 0.0f));
-    m.facet_vert.push_back(0);
-    m.facet_vert.push_back(1);
-    m.facet_vert.push_back(2);
-    m.facet_texcoord.push_back(0);
-    m.facet_texcoord.push_back(1);
-    m.facet_texcoord.push_back(2);
+    mesh cube = TestModel::getTestCube();
+    Shader_Lambert shader;
 
     r.shader = &shader;
     // r.render_frame = true;
 
-    // main loop
+    // set shader variable
+    shader.model = getIdentityMatrix();
+
+    // 相机空间z轴指向屏幕外，-z轴指向屏幕内
+    shader.view = getViewMatrix(r.renderCam.pos, r.renderCam.lookPoint, r.renderCam.up);
+    shader.perspective = getPerspectiveMatrix(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.f);
+
+    r.clearDepthBuffer();
+    r.fill(color4(0, 0, 0, 255));
+    r.drawMesh(cube);
+
     while(!v.shouldClose)
     {
-        // clear zbuffer
-        r.clearDepthBuffer();
-
-        // render
-        r.fill(color4(0, 0, 0, 255));
-        r.drawMesh(m);
-
         // update viewport
         v.renderCopy(&r);
         v.updateBuffers();

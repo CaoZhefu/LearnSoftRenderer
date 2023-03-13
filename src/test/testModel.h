@@ -62,6 +62,8 @@ namespace TestModel
         for(size_t i = 0; i <= cubeVertices.size() / 8; ++i)
         {
             cube.facet_vert.push_back(i);
+            cube.facet_norm.push_back(i);
+            cube.facet_texcoord.push_back(i);
         }
 
         return cube;
