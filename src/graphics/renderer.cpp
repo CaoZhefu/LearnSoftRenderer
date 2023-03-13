@@ -197,8 +197,12 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
     vec2i& p2 = viewportPosInt[2];
     
     // 求面积
-    float area = abs(cross(p1 - p0, p2 - p0));
+    float area = abs((float)cross(p1 - p0, p2 - p0));
     if(area <= 0) return false;
+
+    bool TopLeft01 = IsTopLeft(p0, p1);
+    bool TopLeft12 = IsTopLeft(p1, p2);
+    bool TopLeft20 = IsTopLeft(p2, p0);
 
     // 遍历外接矩形
     for(int y = min_y; y <= max_y; ++y)
@@ -216,10 +220,10 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
             int cross01 = (x - p0.x) * (p1.y - p0.y) - (y - p0.y) * (p1.x - p0.x);
             int cross12 = (x - p1.x) * (p2.y - p1.y) - (y - p1.y) * (p2.x - p1.x);
             int cross20 = (x - p2.x) * (p0.y - p2.y) - (y - p2.y) * (p0.x - p2.x);
-            
-            bool bIn = (cross01 > 0) == (cross12 > 0) && (cross01 > 0) == (cross20 > 0) && (cross12 > 0) == (cross20 > 0);
-            if(!bIn)
-                continue;
+
+            if (cross01 < (TopLeft01? 0 : 1)) continue;   // 在第一条边后面
+            if (cross12 < (TopLeft12? 0 : 1)) continue;   // 在第二条边后面
+            if (cross20 < (TopLeft20? 0 : 1)) continue;   // 在第三条边后面
 
             // 内部三个三角形面积
             float area_a = abs(cross(v1, v2));  // px-p1-p2
@@ -257,7 +261,10 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
 
             // run pixel shader
             vec4 color = shader->frag(fragmentShaderIn);
-            color4 finalColor = colorFromVec01(color);
+            //color4 finalColor = colorFromVec01(color);
+
+            float depth = clamp(rhw, 0.0f, 1.0f);
+            color4 finalColor = colorFromVec01(vec4(depth, depth, depth, 1));
 
             drawPixel(x, y, finalColor);
         }

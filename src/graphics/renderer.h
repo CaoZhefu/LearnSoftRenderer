@@ -34,7 +34,7 @@ public:
         frameBuffer = new unsigned char[width * height * 3];
         zBuffer = new float[width * height];
 
-        renderCam.pos = vec3(3.f, 3.f, 3.f);
+        renderCam.pos = vec3(2.5f, 2.5f, 2.5f);
         renderCam.lookPoint = vec3(0.f, 0.f, 0.f);
         renderCam.up = vec3(0.f, 1.f, 0.f);
 
@@ -53,6 +53,11 @@ public:
     void drawMesh(const mesh& model);
 private:
     bool drawPrimitive(std::vector<vertexShaderIn>& vsInContexts);
+
+    // 判断一条边是不是三角形的左上边 (Top-Left Edge)
+	inline bool IsTopLeft(const vec2i& a, const vec2i& b) {
+		return ((a.y == b.y) && (a.x < b.x)) || (a.y > b.y);
+	}
 
 public:
     void filpFrameBuffer();
