@@ -267,13 +267,18 @@ template<int nRow, int nCol, class T> std::ostream& operator<<(std::ostream& out
 vec3 barycentric(vec2& A, vec2& B, vec2& C, vec2& p);
 
 // 将0-1的向量转换为颜色
-inline static color4 colorFromVec01(const vec4& color01)
+inline static color4 colorFromVec01(vec4& color01)
 {
+    for(int i = 0; i < 4; ++i)
+    {
+        color01[i] = clamp(color01[i], 0.f, 1.f);
+    }
+
     color4 finalColor;
-    finalColor.r = (unsigned char)(color01.r * 254.99f);
-    finalColor.g = (unsigned char)(color01.g * 254.99f);
-    finalColor.b = (unsigned char)(color01.b * 254.99f);
-    finalColor.a = (unsigned char)(color01.a * 254.99f);
+    finalColor.r = (unsigned char)(color01.r * 255.f);
+    finalColor.g = (unsigned char)(color01.g * 255.f);
+    finalColor.b = (unsigned char)(color01.b * 255.f);
+    finalColor.a = (unsigned char)(color01.a * 255.f);
     return finalColor;
 }
 

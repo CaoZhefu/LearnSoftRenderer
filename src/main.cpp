@@ -46,6 +46,7 @@ int main()
     shader.normalTex = &normalTex;
 
     shader.lightPos = vec4(5.f, 0.f, 2.f, 1.f);
+    shader.viewPos = vec4(r.renderCam.pos, 1);
 
     r.clearDepthBuffer();
     r.fill(color4(50, 50, 50, 255));

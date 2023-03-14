@@ -45,6 +45,9 @@ public:
     mat4 perspective;
 
     vec4 lightPos;
+    vec4 viewPos;
+
+    vec4 specularColor = vec4(0.6f, 0.6f, 0.6f, 1.f);
 
     texture* diffuseTex = nullptr;
     texture* normalTex = nullptr;
@@ -79,6 +82,15 @@ public:
 
         float NL = clamp(lightDir * normal, 0.f, 1.f);
 
-        return vec4(NL * diffuse, 1);
+        vec3 viewDir = (viewPos - in.pos).xyz();
+        viewDir.normalize();
+
+        vec3 halfDir = (viewDir + lightDir) / 2.f;
+        halfDir.normalize();
+
+        float NH = clamp(normal * halfDir, 0.f, 1.f);
+        NH = pow(NH, 64);
+
+        return vec4(NL * diffuse, 1) + NH * specularColor;
     }
 };
