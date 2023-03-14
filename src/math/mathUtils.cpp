@@ -24,16 +24,6 @@ vec3 barycentric(vec2& A, vec2& B, vec2& C, vec2& p) {
     return vec3(1.f - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
 }
 
-color4 colorFromVec01(const vec4& color01)
-{
-    color4 finalColor;
-    finalColor.r = (unsigned char)(color01.r * 254.99f);
-    finalColor.g = (unsigned char)(color01.g * 254.99f);
-    finalColor.b = (unsigned char)(color01.b * 254.99f);
-    finalColor.a = (unsigned char)(color01.a * 254.99f);
-    return finalColor;
-}
-
 mat4 getIdentityMatrix() {
     mat4 ret;
     for(int i = 0; i < 4; ++i)
@@ -78,7 +68,6 @@ mat4 getViewMatrix(vec3 eye, vec3 center, vec3 up) {
     ret[1][3] = -(Yaxis * eye);
     ret[2][3] = (Zaxis * eye);
 
-    //std::cout << " View Matrix: " << std::endl << ret << std::endl;
     return ret;
 }
 
@@ -92,6 +81,5 @@ mat4 getPerspectiveMatrix(float fov, float aspect, float znear, float zfar) {
     ret[2][3] = - (2.0f * znear * zfar) / (zfar - znear);
     ret[3][2] = - 1.f;
 
-    //std::cout << "Perspective Matrix: " << std::endl << ret << std::endl;
     return ret;
 }

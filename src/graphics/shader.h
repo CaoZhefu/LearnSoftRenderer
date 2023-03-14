@@ -6,7 +6,6 @@
 struct vertexShaderIn
 {
     vec3 vertex;
-    // vec3 normal;
     vec2 uv;
 };
 
@@ -45,6 +44,11 @@ public:
     mat4 view;
     mat4 perspective;
 
+    vec4 lightPos;
+
+    texture* diffuseTex = nullptr;
+    texture* normalTex = nullptr;
+
     virtual void vert(vertexShaderIn& in, vertexShaderOut& out)
     {
         vec4 worldPos = model * vec4(in.vertex, 1);
@@ -56,6 +60,25 @@ public:
 
     virtual vec4 frag(vertexShaderOut& in)
     {
-        return vec4(in.uv.u, in.uv.v, 0, 1);
+        vec3 diffuse;
+        if(diffuseTex)
+        {
+            diffuse = diffuseTex->sample(in.uv).xyz();
+        }
+
+        vec3 lightDir = (lightPos - in.pos).xyz();
+        lightDir.normalize();
+
+        vec3 normal;
+        if(normalTex)
+        {
+            normal = normalTex->sample(in.uv).xyz();
+            normal = normal * 2.0f - 1.0f;
+            normal.normalize();
+        }
+
+        float NL = clamp(lightDir * normal, 0.f, 1.f);
+
+        return vec4(NL * diffuse, 1);
     }
 };

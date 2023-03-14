@@ -261,10 +261,11 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
 
             // run pixel shader
             vec4 color = shader->frag(fragmentShaderIn);
-            //color4 finalColor = colorFromVec01(color);
+            color4 finalColor = colorFromVec01(color);
 
-            float depth = clamp(rhw, 0.0f, 1.0f);
-            color4 finalColor = colorFromVec01(vec4(depth, depth, depth, 1));
+            // show depth
+            // float depth = clamp(rhw, 0.0f, 1.0f);
+            // finalColor = colorFromVec01(vec4(depth, depth, depth, 1));
 
             drawPixel(x, y, finalColor);
         }

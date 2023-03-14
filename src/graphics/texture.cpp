@@ -38,8 +38,8 @@ vec4 texture::sample(vec2 uv) {
     uv.x = frac(uv.x);
     uv.y = frac(uv.y);
 
-    int x = clamp(int(width * uv.x), 0, width - 1);
-    int y = clamp(int(height * uv.y), 0, height - 1);
+    int x = clamp((int)(width * uv.x), 0, width - 1);
+    int y = clamp((int)(height * uv.y), 0, height - 1);
 
     return get(x, y);
 }
@@ -53,27 +53,27 @@ vec4 texture::get(int x, int y) {
 
     // Gray
     if(channelCnt == 1) {    
-        ret[0] = (float)data[idx];
+        ret.r = color01From255(data[idx]);
     }
     // Gray Alpha
     else if(channelCnt == 2) {
-        ret[0] = (float)data[idx * 2];
-        ret[3] = (float)data[idx * 2 + 1];
+        ret.r = color01From255(data[idx * 2]);
+        ret.a = color01From255(data[idx * 2 + 1]);
     }
     // RGB
     else if(channelCnt == 3) {
-        ret[0] = (float)data[idx * 3];
-        ret[1] = (float)data[idx * 3 + 1];
-        ret[2] = (float)data[idx * 3 + 2];
+        ret.r = color01From255(data[idx * 3]);
+        ret.g = color01From255(data[idx * 3 + 1]);
+        ret.b = color01From255(data[idx * 3 + 2]);
     }
     // RGBA
     else if(channelCnt == 4) {
-        ret[0] = (float)data[idx * 4];
-        ret[1] = (float)data[idx * 4 + 1];
-        ret[2] = (float)data[idx * 4 + 2];
-        ret[3] = (float)data[idx * 4 + 3];
+        ret.r = color01From255(data[idx * 4]);
+        ret.g = color01From255(data[idx * 4 + 1]);
+        ret.b = color01From255(data[idx * 4 + 2]);
+        ret.a = color01From255(data[idx * 4 + 3]);
     }
-
+    
     return ret;
 }
 
@@ -82,5 +82,6 @@ void texture::clearData()
     if(data)
     {
         bLoadFromFile ? stbi_image_free(data) : free(data);
+        data = nullptr;
     }
 }

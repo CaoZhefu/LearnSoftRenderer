@@ -52,6 +52,13 @@ template<int n, class T> vec<n, T> operator-(const vec<n, T>& lhs, const vec<n, 
     return ret;
 }
 
+template<int n, class T> vec<n, T> operator-(const vec<n, T>& lhs, const T rhs)
+{
+    vec<n, T> ret = lhs;
+    for(int i = 0; i < n; ++i) ret[i] -= rhs;
+    return ret;
+}
+
 template<int n, class T> vec<n, T> operator*(const vec<n, T>& lhs, const float rhs)
 {
     vec<n, T> ret = lhs;
@@ -163,6 +170,10 @@ public:
         }
     }
 
+    vec<3, T> xyz() const
+    {
+        return vec<3, T>(x, y, z);
+    }
 };
 typedef vec<4, float> vec4;
 typedef vec<4, unsigned char> color4;
@@ -256,12 +267,26 @@ template<int nRow, int nCol, class T> std::ostream& operator<<(std::ostream& out
 vec3 barycentric(vec2& A, vec2& B, vec2& C, vec2& p);
 
 // 将0-1的向量转换为颜色
-color4 colorFromVec01(const vec4& color01);
+inline static color4 colorFromVec01(const vec4& color01)
+{
+    color4 finalColor;
+    finalColor.r = (unsigned char)(color01.r * 254.99f);
+    finalColor.g = (unsigned char)(color01.g * 254.99f);
+    finalColor.b = (unsigned char)(color01.b * 254.99f);
+    finalColor.a = (unsigned char)(color01.a * 254.99f);
+    return finalColor;
+}
 
-template<typename ... Args>
-std::string string_format(const std::string& format, Args ... args){
-    size_t size = 1 + snprintf(nullptr, 0, format.c_str(), args ...);  // Extra space for \0
-    char bytes[size];
-    snprintf(bytes, size, format.c_str(), args ...);
-    return std::string(bytes);
+// 将0-255的值转为0-1
+inline static float color01From255(unsigned char color)
+{
+    return (float)color / 255.0f;
+}
+
+template<typename... Args>
+std::string string_format(const std::string& format, Args&&... args) {
+	size_t size = std::snprintf(nullptr, 0, format.c_str(), std::forward<Args>(args)...) + 1; // Extra space for '\0'
+	std::unique_ptr<char[]> buf(new char[size]);
+	std::snprintf(buf.get(), size, format.c_str(), std::forward<Args>(args)...);
+	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
