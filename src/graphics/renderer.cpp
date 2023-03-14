@@ -258,6 +258,7 @@ bool renderer::drawPrimitive(std::vector<vertexShaderIn> &vsInContexts)
             // Prepare fragment shader input
             vertexShaderOut fragmentShaderIn;
             fragmentShaderIn.uv = vsOutContexts[0].uv * c0 + vsOutContexts[1].uv * c1 + vsOutContexts[2].uv * c2;
+            fragmentShaderIn.worldPos = vsOutContexts[0].worldPos * c0 + vsOutContexts[1].worldPos * c1 + vsOutContexts[2].worldPos * c2;
 
             // run pixel shader
             vec4 color = shader->frag(fragmentShaderIn);

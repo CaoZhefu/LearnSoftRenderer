@@ -45,8 +45,8 @@ int main()
     shader.diffuseTex = &diffuseTex;
     shader.normalTex = &normalTex;
 
-    shader.lightPos = vec4(5.f, 0.f, 2.f, 1.f);
-    shader.viewPos = vec4(r.renderCam.pos, 1);
+    shader.lightPos = vec3(2.f, 1.f, 5.f);
+    shader.viewPos = r.renderCam.pos;
 
     r.clearDepthBuffer();
     r.fill(color4(50, 50, 50, 255));
