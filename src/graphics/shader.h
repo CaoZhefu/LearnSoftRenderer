@@ -47,7 +47,7 @@ public:
     vec4 lightPos;
     vec4 viewPos;
 
-    vec4 specularColor = vec4(0.6f, 0.6f, 0.6f, 1.f);
+    vec3 specularColor = vec3(0.6f, 0.6f, 0.6f);
 
     texture* diffuseTex = nullptr;
     texture* normalTex = nullptr;
@@ -63,10 +63,12 @@ public:
 
     virtual vec4 frag(vertexShaderOut& in)
     {
-        vec3 diffuse;
+        vec3 ambient = vec3(0.1f, 0.1f, 0.1f);
+
+        vec3 baseColor;
         if(diffuseTex)
         {
-            diffuse = diffuseTex->sample(in.uv).xyz();
+            baseColor = diffuseTex->sample(in.uv).xyz();
         }
 
         vec3 lightDir = (lightPos - in.pos).xyz();
@@ -81,6 +83,7 @@ public:
         }
 
         float NL = clamp(lightDir * normal, 0.f, 1.f);
+        vec3 diffuse(NL, NL, NL);
 
         vec3 viewDir = (viewPos - in.pos).xyz();
         viewDir.normalize();
@@ -89,8 +92,17 @@ public:
         halfDir.normalize();
 
         float NH = clamp(normal * halfDir, 0.f, 1.f);
-        NH = pow(NH, 64);
+        NH = pow(NH, 32);
+        
+        vec3 specular = NH * specularColor;
 
-        return vec4(NL * diffuse, 1) + NH * specularColor;
+        vec3 finalColor;
+        for(int i = 0; i < 3; ++i)
+        {
+            finalColor[i] = (ambient[i] + diffuse[i] + specular[i]) * baseColor[i];
+            finalColor[i] = clamp(finalColor[i], 0.f, 1.f);
+        }
+
+        return vec4(finalColor, 1);
     }
 };
